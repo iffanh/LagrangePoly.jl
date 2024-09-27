@@ -1,8 +1,6 @@
+module GenerateLagrangeBases
+
 import Pkg; 
-NDim = 3
-NOrder = 2
-
-
 using Combinatorics
 using Symbolics
 using LinearAlgebra
@@ -56,7 +54,7 @@ function compute_basis_matrix(data_points, basis, x)
     for i in axes(data_points, 1)
         inps = data_points[i, :]
         values = Dict(x[j] => inps[j] for j in eachindex(inps))
-        entry = substitute.(basis, Ref(values))
+        entry = Symbolics.value.(substitute.(basis, Ref(values)))
         push!(basis_matrix, entry)
     end
 
@@ -65,20 +63,9 @@ function compute_basis_matrix(data_points, basis, x)
     return basis_matrix
 end
 
-function build_lagrange_polynomials_frobenius(data_points, basis, x, is_gen=false)
-    #=
-    Responsible for generating the Lagrange polynomials in Frobenius norm sense.
-
-    Args:
-        basis: List of polynomial base
-        data_points: matrix of interpolation set input Y {y1, y2, ..., yp}
-
-    Returns:
-        List of Lagrange polynomials, {lambda_1, lambda_1, ..., lambda_p}
-    =#
+function build_lagrange_basis_frobenius(data_points, basis, x)
 
     M = compute_basis_matrix(data_points, basis, x)
-    println(typeof(M))
 
     # Divide between linear and quadratic terms
     n = size(data_points, 2)
@@ -90,8 +77,6 @@ function build_lagrange_polynomials_frobenius(data_points, basis, x, is_gen=fals
 
     # Build matrix F (eq 5.7)
     A = M_q * M_q'
-
-    println(typeof(A), typeof(M_q), typeof(M_l))
     
     F = vcat(hcat(A, M_l), hcat(M_l', zeros(size(M_l, 2), size(M_l, 2))))
 
@@ -106,22 +91,18 @@ function build_lagrange_polynomials_frobenius(data_points, basis, x, is_gen=fals
     return polys
 end
 
-# Example usage
+function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
+    x = Symbolics.variables(:x, 1:n)
+    linear_monomials = generate_monomials_symbolic(n, m-1, x)
+    quadratic_monomials = generate_monomials_symbolic(n, m, x)
 
-n = 2 # Dimension (number of variables)
-m = 2  # Order (total degree of polynomial)
-x = Symbolics.variables(:x, 1:n)
-linear_monomials = generate_monomials_symbolic(n, m-1, x)
-quadratic_monomials = generate_monomials_symbolic(n, m, x)
+    monomials = []
+    append!(monomials, [1])
+    append!(monomials, linear_monomials)
+    append!(monomials, quadratic_monomials)
 
-monomials = []
-append!(monomials, [1])
-append!(monomials, linear_monomials)
-append!(monomials, quadratic_monomials)
+    lpoly = build_lagrange_bases_frobenius(d, monomials, x)
+    return lpoly
+end
 
-# Print all possible monomials
-println(monomials)
-
-data_points = [1.0 2.0; 4.0 5.0; 5.0 6.0; 7.0 8.0; 9.0 10.0]  # Example data points
-
-lpolynomials = build_lagrange_polynomials_frobenius(data_points, monomials, x)
+end
