@@ -123,6 +123,4 @@ function update_lagrange_bases(lpolys, d::Matrix{Float64}, dn::Vector{Float64}, 
 
 end
 
-
-
 end
