@@ -57,7 +57,6 @@ end
 
 function build_lagrange_bases_frobenius(data_points, basis, x)
     M = compute_basis_matrix(data_points, basis, x)
-    println(M)
 
     n = size(data_points, 2)
     M_l = M[1:n+1, :]' 
@@ -66,7 +65,6 @@ function build_lagrange_bases_frobenius(data_points, basis, x)
     Vb_l = basis[1:n+1]
     Vb_q = basis[n+2:end]
 
-    println(M_q)
     A = M_q * M_q'
     F = vcat(hcat(A, M_l), hcat(M_l', zeros(size(M_l, 2), size(M_l, 2))))
 
@@ -81,7 +79,6 @@ end
 
 function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
     @polyvar x[1:n]
-    println(x[1], x[2])
     linear_monomials = generate_monomials_dynamic(n, m-1, x)
     quadratic_monomials = generate_monomials_dynamic(n, m, x)
 
@@ -91,7 +88,7 @@ function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
     append!(monomials, quadratic_monomials)
 
     lpoly = build_lagrange_bases_frobenius(d, monomials, x)
-    return lpoly
+    return lpoly, x
 end
 
 end
