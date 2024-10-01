@@ -88,7 +88,35 @@ function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
     append!(monomials, quadratic_monomials)
 
     lpoly = build_lagrange_bases_frobenius(d, monomials, x)
-    return lpoly, x
+    return lpoly
+end
+
+function update_lagrange_bases(lpoly, d::Matrix{Float64}, dn::Vector{Float64}, ind::Int)
+    #= Build new lagrange polynomial basis by changing one of the data point
+
+    ind :: index of the point to be replaced
+    =#
+
+    lpolyk = lpoly[ind]
+    nlpolyk = lpolyk/lpolyk(dn)
+    
+    nlpoly = []
+    for j in eachindex(lpoly)
+
+        if j == ind
+            push!(nlpoly, nlpolyk)
+            continue
+        end
+
+        nlpolyj = lpoly[j] - lpoly[j](dn)*nlpolyk
+        push!(nlpoly, nlpolyj)
+
+    end
+
+    d[ind, :] = dn
+
+    return nlpoly, d
+
 end
 
 end
