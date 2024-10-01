@@ -91,24 +91,28 @@ function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
     return lpoly
 end
 
-function update_lagrange_bases(lpoly, d::Matrix{Float64}, dn::Vector{Float64}, ind::Int)
+function update_lagrange_bases(lpolys, d::Matrix{Float64}, dn::Vector{Float64}, ind::Int)
     #= Build new lagrange polynomial basis by changing one of the data point
 
-    ind :: index of the point to be replaced
+    #Equation (6.9) and (6.10)
+    lpoly :: vector of lagrange polynomial bases
+    d :: current data points
+    dn :: new point
+    ind :: index of the current data point to be replaced
     =#
 
-    lpolyk = lpoly[ind]
+    lpolyk = lpolys[ind]
     nlpolyk = lpolyk/lpolyk(dn)
     
     nlpoly = []
-    for j in eachindex(lpoly)
+    for j in eachindex(lpolys)
 
         if j == ind
             push!(nlpoly, nlpolyk)
             continue
         end
 
-        nlpolyj = lpoly[j] - lpoly[j](dn)*nlpolyk
+        nlpolyj = lpolys[j] - lpolys[j](dn)*nlpolyk
         push!(nlpoly, nlpolyj)
 
     end
@@ -118,5 +122,7 @@ function update_lagrange_bases(lpoly, d::Matrix{Float64}, dn::Vector{Float64}, i
     return nlpoly, d
 
 end
+
+
 
 end
