@@ -2,7 +2,7 @@ using TestItemRunner
 
 @run_package_tests verbose = true
 
-@testitem "Simple case" begin
+@testitem "Generation of full quadratic polynomial" begin
     using DynamicPolynomials
     using LagrangePoly
 
@@ -66,6 +66,53 @@ using TestItemRunner
     @test abs(myPoly[6].a[6] - 0) < tol
     @test abs(myPoly[6].a[5] - 0) < tol
 
+    for i in eachindex(myPoly)
+        for j in eachindex(myPoly)
+            if i == j
+                val = 1
+            else
+                val = 0
+            end
+            @test abs(myPoly[i](data_points[j,:]) - val) < tol
+        end
+    end 
+
 end
 
+@testitem "Generation of linear polynomial" begin
+    
+    using DynamicPolynomials
+    using LagrangePoly
+
+
+    n = 2; # number of variables
+    m = 2; # polynomial degree
+
+    data_points = [0.0 1.0; 
+                1.0 0.0];
+
+
+    myPoly = generate_lagrange_bases(n, m, data_points); ## should generate only linear terms
+
+    tol = 1e-8
+    @test abs(myPoly[1].a[1] - 1/3) < tol
+    @test abs(myPoly[1].a[2] - 2/3) < tol
+    @test abs(myPoly[1].a[3] - -1/3) < tol
+
+    @test abs(myPoly[2].a[1] - 1/3) < tol
+    @test abs(myPoly[2].a[2] - -1/3) < tol
+    @test abs(myPoly[2].a[3] - 2/3) < tol
+
+    for i in eachindex(myPoly)
+        for j in eachindex(myPoly)
+            if i == j
+                val = 1
+            else
+                val = 0
+            end
+            @test abs(myPoly[i](data_points[j,:]) - val) < tol
+        end
+    end 
+    
+end
 
