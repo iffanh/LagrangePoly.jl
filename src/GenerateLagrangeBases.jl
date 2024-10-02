@@ -3,7 +3,7 @@ module GenerateLagrangeBases
 # import Pkg;
 # Pkg.add("DynamicPolynomials")
 
-using DynamicPolynomials, LinearAlgebra, Combinatorics
+
 
 function multinomial_coefficient(powers::Vector{Int})
     return prod(factorial(p) for p in powers)
