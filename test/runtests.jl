@@ -1,8 +1,10 @@
-using LagrangePoly
-using Test
+using TestItemRunner
 
-@testset "LagrangePoly.jl" begin
-    # Write your tests here.
+@run_package_tests verbose = true
+
+@testitem "Simple case" begin
+    using DynamicPolynomials
+    using LagrangePoly
 
 
     n = 2; # number of variables
@@ -17,8 +19,9 @@ using Test
                 0.0 2.0];
 
 
-    myPoly = GenerateLagrangeBases.generate_lagrange_bases(n, m, data_points);
+    myPoly = generate_lagrange_bases(n, m, data_points);
 
-    println(myPoly)
-
+    @test typeof(myPoly) == Vector{DynamicPolynomials.Polynomial{DynamicPolynomials.Commutative{DynamicPolynomials.CreationOrder}, MultivariatePolynomials.Graded{MultivariatePolynomials.LexOrder}, Float64}} ## TODO: replace this with something meaningful
 end
+
+
