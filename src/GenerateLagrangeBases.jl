@@ -1,10 +1,3 @@
-module GenerateLagrangeBases
-
-# import Pkg;
-# Pkg.add("DynamicPolynomials")
-
-
-
 function multinomial_coefficient(powers::Vector{Int})
     return prod(factorial(p) for p in powers)
 end
@@ -78,7 +71,7 @@ function build_lagrange_bases_frobenius(data_points, basis, x)
 end
 
 function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
-    @polyvar x[1:n]
+    DynamicPolynomials.@polyvar x[1:n]
     linear_monomials = generate_monomials_dynamic(n, m-1, x)
     quadratic_monomials = generate_monomials_dynamic(n, m, x)
 
@@ -120,7 +113,5 @@ function update_lagrange_bases(lpolys, d::Matrix{Float64}, dn::Vector{Float64}, 
     d[ind, :] = dn
 
     return nlpoly, d
-
-end
 
 end

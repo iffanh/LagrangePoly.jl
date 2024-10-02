@@ -1,11 +1,16 @@
 module LagrangePoly
 
-# Write your package code here.
-using DynamicPolynomials, LinearAlgebra, Combinatorics
+using Combinatorics
+using CSDP
+using DynamicPolynomials
+using JuMP
+using LinearAlgebra
+using SumOfSquares
 
 include("GenerateLagrangeBases.jl")
 include("GenerateLagrangePoly.jl")
-# using GenerateLagrangeBases
-# using GenerateLagrangePoly
+
+export generate_lagrange_bases
+#export LagrangePolynomial ##TODO
 
 end

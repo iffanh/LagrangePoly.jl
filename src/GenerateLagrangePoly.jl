@@ -1,11 +1,3 @@
-module GenerateLagrangePoly
-
-include("GenerateLagrangeBases.jl")
-using DynamicPolynomials
-using JuMP
-using CSDP
-using SumOfSquares
-
 function generate_lagrange_poly(Y::Vector{Float64}, lpolys)
     poly = 0
     for (y, b) in zip(Y, lpolys)
@@ -50,8 +42,8 @@ function find_point_that_maximizes_lagrange_base(lpoly, center::Vector{Float64},
     solver = optimizer_with_attributes(CSDP.Optimizer, MOI.Silent() => true)
     model = SOSModel(solver)
 
-    @variable(model, α)
-    @objective(model, Min, α)
+    JuMP.@variable(model, α)
+    JuMP.@objective(model, Min, α)
 
     x = DynamicPolynomials.variables(lpoly)
     the_sum = sum((x[j] - center[j])^2 for j in eachindex(center))
@@ -85,6 +77,4 @@ function model_improvement(lpolys, d::Matrix{Float64}, radius::Float64, Λth::Fl
     end
 
     return lpolys, d
-end
-
 end
