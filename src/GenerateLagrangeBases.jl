@@ -31,7 +31,7 @@ function multinomial(n::Integer, m::Integer)
     return nomials
 end
 
-function compute_basis_matrix(data_points, basis, x)
+function compute_basis_matrix(data_points::Matrix{Float64}, basis, x)
     basis_matrix = []
     for i in axes(data_points, 1)
         inps = data_points[i, :]
@@ -43,12 +43,10 @@ function compute_basis_matrix(data_points, basis, x)
     basis_matrix = hcat(basis_matrix...)
     basis_matrix = Array{Float64}(basis_matrix)
 
-    # convert(Matrix(Float64), basis_matrix)
-    # Float64.(basis_matrix)
     return basis_matrix
 end
 
-function build_lagrange_bases_frobenius(data_points, basis, x)
+function build_lagrange_bases_frobenius(data_points::Matrix{Float64}, basis, x)
     M = compute_basis_matrix(data_points, basis, x)
 
     n = size(data_points, 2)
@@ -73,12 +71,18 @@ end
 function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
     DynamicPolynomials.@polyvar x[1:n]
     linear_monomials = generate_monomials_dynamic(n, m-1, x)
-    quadratic_monomials = generate_monomials_dynamic(n, m, x)
 
+    if size(d)[1] >= n + 1
+        quadratic_monomials = generate_monomials_dynamic(n, m, x)
+    end
+    
     monomials = []
     append!(monomials, [1])
     append!(monomials, linear_monomials)
-    append!(monomials, quadratic_monomials)
+
+    if size(d)[1] >= n + 1
+        append!(monomials, quadratic_monomials)
+    end
 
     lpoly = build_lagrange_bases_frobenius(d, monomials, x)
     return lpoly
