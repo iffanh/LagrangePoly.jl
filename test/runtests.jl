@@ -10,6 +10,7 @@ using TestItemRunner
     n = 2; # number of variables
     m = 2; # polynomial degree
 
+    # From Chapter 3 in Conn's book
     data_points = [0.0 0.0; 
                 1.0 0.0;
                 0.0 1.0; 
@@ -22,7 +23,7 @@ using TestItemRunner
 
     @test typeof(myPoly) == Vector{DynamicPolynomials.Polynomial{DynamicPolynomials.Commutative{DynamicPolynomials.CreationOrder}, MultivariatePolynomials.Graded{MultivariatePolynomials.LexOrder}, Float64}} ## TODO: replace this with something meaningful
 
-    # From Chapter 3 in Conn's book
+    # test the bases
     tol = 1e-8
     @test abs(myPoly[1].a[1] - 1) < tol 
     @test abs(myPoly[1].a[3] - -1.5) < tol 
@@ -66,6 +67,7 @@ using TestItemRunner
     @test abs(myPoly[6].a[6] - 0) < tol
     @test abs(myPoly[6].a[5] - 0) < tol
 
+    # test the lagrange identity
     for i in eachindex(myPoly)
         for j in eachindex(myPoly)
             if i == j
@@ -77,6 +79,17 @@ using TestItemRunner
         end
     end 
 
+    # test the poisedness
+    data_points = [0.5 0.5; 
+                    0.524 0.0006; 
+                    0.032 0.323;
+                    0.187 0.890; 
+                    0.982 0.368;
+                    0.774 0.918]
+
+    myPoly = generate_lagrange_bases(n, m, data_points);
+    p = LagrangePoly.compute_poisedness(data_points[1,:], 0.5, myPoly)
+    @test abs(max(p...) - 1) < 1e-3
 end
 
 @testitem "Generation of linear polynomial" begin
@@ -113,6 +126,6 @@ end
             @test abs(myPoly[i](data_points[j,:]) - val) < tol
         end
     end 
-    
+
 end
 
