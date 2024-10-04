@@ -1,9 +1,14 @@
-function generate_lagrange_poly(Y::Vector{Float64}, lpolys)
+function _generate_lagrange_poly(Y::Vector{Float64}, lpolys)
     poly = 0
     for (y, b) in zip(Y, lpolys)
         poly += y*b
     end
     return poly
+end
+
+function generate_lagrange_poly(n::Int, m::Int, d::Matrix{Float64}, Y::Vector{Float64})
+    lpolys = generate_lagrange_bases(n, m, d)
+    return _generate_lagrange_poly(Y, lpolys)
 end
 
 function compute_poisedness(center::Vector{Float64}, radius::Float64, lpolys)
