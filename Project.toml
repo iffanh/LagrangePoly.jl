@@ -1,7 +1,7 @@
 name = "LagrangePoly"
 uuid = "d1125592-8787-4b95-bcb1-ea3de4fb8670"
 authors = ["Iffan Hannanu <iffan.hannanu@gmail.com> and contributors"]
-version = "1.0.0-DEV1"
+version = "1.0.0"
 
 [deps]
 CSDP = "0a46da34-8e4b-519e-b418-48813639ff34"
