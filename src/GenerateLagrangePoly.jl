@@ -18,15 +18,15 @@ function compute_poisedness(center::Vector{Float64}, radius::Float64, lpolys)
     for lpoly in lpolys
             model = SOSModel(solver)
 
-            @variable(model, α)
-            @objective(model, Min, α)
+            JuMP.@variable(model, α)
+            JuMP.@objective(model, Min, α)
 
             x = DynamicPolynomials.variables(lpoly)
             the_sum = sum((x[j] - center[j])^2 for j in eachindex(center))
             S = SumOfSquares.@set the_sum <= radius^2
-            @constraint(model, c2, lpoly <= α, domain = S, maxdegree = 2)
+            JuMP.@constraint(model, c2, lpoly <= α, domain = S, maxdegree = 2)
 
-            optimize!(model)
+            JuMP.optimize!(model)
             
             # FOR DEBUGGING
             #println(solution_summary(model))
@@ -63,7 +63,7 @@ function find_point_that_maximizes_lagrange_base(lpoly, center::Vector{Float64},
     return x_opt
 end
 
-function model_improvement(lpolys, d::Matrix{Float64}, radius::Float64, Λth::Float64)
+function model_improvement!(lpolys, d::Matrix{Float64}, radius::Float64, Λth::Float64)
 
     center = d[1, :]
     for k in size(d, 1)
