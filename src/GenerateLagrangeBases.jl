@@ -68,6 +68,25 @@ function build_lagrange_bases_frobenius(data_points::Matrix{Float64}, basis, x)
     return polys
 end
 
+function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64}, x::Vector{Variable{DynamicPolynomials.Commutative{DynamicPolynomials.CreationOrder}, Graded{LexOrder}}})
+    linear_monomials = generate_monomials_dynamic(n, m-1, x)
+
+    if size(d)[1] >= n + 1
+        quadratic_monomials = generate_monomials_dynamic(n, m, x)
+    end
+    
+    monomials = []
+    append!(monomials, [1])
+    append!(monomials, linear_monomials)
+
+    if size(d)[1] >= n + 1
+        append!(monomials, quadratic_monomials)
+    end
+
+    lpoly = build_lagrange_bases_frobenius(d, monomials, x)
+    return lpoly
+end
+
 function generate_lagrange_bases(n::Integer, m::Integer, d::Matrix{Float64})
     DynamicPolynomials.@polyvar x[1:n]
     linear_monomials = generate_monomials_dynamic(n, m-1, x)
